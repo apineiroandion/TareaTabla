@@ -12,7 +12,7 @@ public class Ventana extends JFrame {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JPanel panel = new JPanel();
+        JPanel panel = addAlumno();
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(panel, gbc);
