@@ -1,10 +1,17 @@
 package interfazUsuario;
 
+import logicaApp.Alumno;
+import logicaApp.Alumnos;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Ventana extends JFrame {
-    public Ventana() {
+    ArrayList<Alumno> alumnos;
+    public Ventana(Alumnos alumnos) {
+        this.alumnos = alumnos.getAlumnos();
         setTitle("Ventana");
         setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -16,6 +23,11 @@ public class Ventana extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(panel, gbc);
+
+        JScrollPane tabla = addTable();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(tabla, gbc);
 
         setVisible(true);
     }
@@ -62,5 +74,26 @@ public class Ventana extends JFrame {
 
         panel.setVisible(true);
         return panel;
+    }
+
+    public JScrollPane addTable(){
+        ArrayList<String[]> data = getData();
+        String[] columnas = {"Nombre", "Apellido", "Curso"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnas, 0);
+        for (String[] row: data){
+            tableModel.addRow(row);
+        }
+
+        JTable table= new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+        return scrollPane;
+    }
+    public ArrayList<String[]> getData() {
+        ArrayList<String[]> data = new ArrayList<>();
+        for (int i = 0; i < alumnos.size(); i++){
+            data.add(new String[]{alumnos.get(i).getName(),
+                    alumnos.get(i).getSurnume(), alumnos.get(i).getCurso()});
+        }
+        return data;
     }
 }
