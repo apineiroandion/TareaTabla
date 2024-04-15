@@ -6,10 +6,22 @@ import logicaApp.Alumnos;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class Ventana extends JFrame {
-    ArrayList<Alumno> alumnos;
+    ArrayList<Alumno> alumnos = new ArrayList<>();
+    JComboBox cbAlumno;
+    JPanel panel;
+    JScrollPane tabla;
+    ArrayList<String[]> data = getData();
+    String[] columnas = {"Nombre", "Apellido", "Curso"};
+    DefaultTableModel tableModel = new DefaultTableModel(columnas, 0);
+
+    JTextField txtAlumno;
+    JTextField txtApelido;
+
     public Ventana(Alumnos alumnos) {
         this.alumnos = alumnos.getAlumnos();
         setTitle("Ventana");
@@ -19,12 +31,12 @@ public class Ventana extends JFrame {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JPanel panel = addAlumno();
+        panel = addAlumno();
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(panel, gbc);
 
-        JScrollPane tabla = addTable();
+        tabla = addTable();
         gbc.gridx = 0;
         gbc.gridy = 1;
         add(tabla, gbc);
@@ -44,13 +56,14 @@ public class Ventana extends JFrame {
         gbc.insets = padding;
         panel.add(lblAlumno, gbc);
         //x=1,y=0 JTextName
-        JTextField txtAlumno = new JTextField();
+        txtAlumno = new JTextField();
         txtAlumno.setColumns(15);
         gbc.gridx = 1;
         gbc.gridy = 0;
         panel.add(txtAlumno, gbc);
         //x=2,y=0 JCombobox Curso
-        JComboBox cbAlumno = new JComboBox();
+        String[] opciones = {"DAM 1", "DAM 2"};
+        cbAlumno = new JComboBox(opciones);
         cbAlumno.setPreferredSize(new Dimension(150, 30));
         gbc.gridx = 2;
         gbc.gridy = 0;
@@ -61,7 +74,7 @@ public class Ventana extends JFrame {
         gbc.gridy = 1;
         panel.add(lblApelido, gbc);
         //x=1,y=1 JTextApelido
-        JTextField txtApelido = new JTextField();
+        txtApelido = new JTextField();
         txtApelido.setColumns(15);
         gbc.gridx = 1;
         gbc.gridy = 1;
@@ -72,18 +85,34 @@ public class Ventana extends JFrame {
         gbc.gridy = 1;
         panel.add(addTable, gbc);
 
+        addTable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newAlumno();
+                data = getData();
+                addRowTable();
+                tabla.repaint();
+            }
+        });
+
         panel.setVisible(true);
         return panel;
     }
 
     public JScrollPane addTable(){
-        ArrayList<String[]> data = getData();
-        String[] columnas = {"Nombre", "Apellido", "Curso"};
-        DefaultTableModel tableModel = new DefaultTableModel(columnas, 0);
         for (String[] row: data){
             tableModel.addRow(row);
         }
-
+        JTable table= new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+        return scrollPane;
+    }
+    public JScrollPane addRowTable(){
+        tableModel.addRow(new String[]{
+                txtAlumno.getText(),
+                txtApelido.getText(),
+                cbAlumno.getSelectedItem().toString()
+        });
         JTable table= new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         return scrollPane;
@@ -96,4 +125,12 @@ public class Ventana extends JFrame {
         }
         return data;
     }
+    public void newAlumno(){
+        alumnos.add(new Alumno(
+               txtAlumno.getText(),
+               txtApelido.getText(),
+                cbAlumno.getSelectedItem().toString()
+        ));
+    }
+
 }
